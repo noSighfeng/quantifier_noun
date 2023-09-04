@@ -27,7 +27,7 @@ class correct:
             for k,v in self.quantifier_noun_dict.items():
                 if mybe[2] in v:
                     res.append(k)
-        return res
+        return mybe[0] + '[%s]' % '|'.join(res) + mybe[2]
 
     
 
@@ -69,7 +69,7 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有九百八十碗奶茶'))
+    print(co.correct('这里有九百八十个猪'))
 
 
 
