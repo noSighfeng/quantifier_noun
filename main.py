@@ -92,5 +92,38 @@ def write_to_file(word,right_word):
     f.write('{}:{}\n'.format(word, right_word))
     f.close()
 
+
+# 数据整理 构建量词与名词库
+def data_collation():
+    res = {}
+    with open('corpus.txt','r',encoding='utf-8') as f:
+        for line in f:
+            t = line.strip().split(':')
+            res[t[0]] = res.get(t[0],set())
+            res[t[0]].add(t[1])
+    
+    with open('quan_noun.txt','w',encoding='utf-8') as f:
+        for k,v in res.items():
+            f.write(k + ' ')
+            for i in v:
+                f.write(i + ' ')
+            f.write('\n')
+    return True
+
+# 构建名词词库
+def noun_collation():
+    res = set()
+    with open('corpus.txt','r',encoding='utf-8') as f:
+        for line in f:
+            t = line.strip().split(':')
+            res.add(t[1])
+    
+    with open('noun.txt','w',encoding='utf-8') as f:
+        f.write('|'.join(res))
+
 if __name__ == '__main__':
-    fetch_quantifier_noun(os.path.join(os.getcwd(), '199801'))
+
+    # fetch_quantifier_noun(os.path.join(os.getcwd(), '199801')) 1.
+    # data_collation() 2.
+    # noun_collation() 3.
+    print
