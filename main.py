@@ -203,4 +203,4 @@ if __name__ == '__main__':
     data_write_path = os.path.join(os.getcwd(), 'result.txt')
     quantifierNounMI = QuantifierNounMI(mi_corpus_path, data_write_path)
     quantifierNounMI.calcute()
-    # fetch_quantifier_noun(os.path.join(os.getcwd(), '199801'))
+    fetch_quantifier_noun(os.path.join(os.getcwd(), '199801'))
