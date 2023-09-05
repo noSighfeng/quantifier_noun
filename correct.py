@@ -10,7 +10,7 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([{}]+)' + '({})' + '(?:{})').format(''.join(self.num_list)
+        self.pattern = ('([{}]+)' + '({})' + '({})').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,''.join(self.noun_list))
     
@@ -75,7 +75,7 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有东西'))
+    print(co.correct('这里有一样东西'))
 
 
 
