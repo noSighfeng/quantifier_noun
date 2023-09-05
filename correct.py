@@ -10,8 +10,8 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([{}]+)' + '([{}])' + '({})').format(''.join(self.num_list)
-                                                       ,''.join(self.quantifier_list)
+        self.pattern = ('([{}]+)' + '({})' + '({})').format(''.join(self.num_list)
+                                                       ,'|'.join(self.quantifier_list)
                                                        ,''.join(self.noun_list))
     
     def find(self,sentence):
@@ -19,7 +19,7 @@ class correct:
         print(re.findall(self.pattern,sentence))
         return re.findall(self.pattern,sentence)
 
-    def correct(self,sentence):
+    def correct(self,sentence): # (['','',''])
         mybe = self.find(sentence)[0]
         res = []
         if mybe[2] not in self.quantifier_noun_dict[mybe[1]]:
@@ -45,10 +45,10 @@ def init_list():
             num_list.append(line.strip())
 
 
-    quantifier_path = os.path.join(os.getcwd(),'data_txt/quantifier.txt')
-    with open(quantifier_path,'r',encoding='utf-8') as f:
-        for line in f:
-            quantifier_list.append(line.strip())
+    # quantifier_path = os.path.join(os.getcwd(),'data_txt/quantifier.txt')
+    # with open(quantifier_path,'r',encoding='utf-8') as f:
+    #     for line in f:
+    #         quantifier_list.append(line.strip())
 
 
     noun_path = os.path.join(os.getcwd(),'data_txt/noun.txt')
@@ -59,8 +59,9 @@ def init_list():
     quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt\\quan_noun.txt')
     with open(quantifier_noun_dict_path,'r',encoding='utf-8') as f:
         for line in f:
-            line_spl = line.split(' ')
+            line_spl = line.strip().split(' ')
             quan = line_spl[0]
+            quantifier_list.append(quan)
             quantifier_noun_dict[quan] = set(line_spl[1:])
 
     
@@ -71,7 +72,7 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有一棵树'))
+    print(co.correct('这里有一棵棵树'))
 
 
 
