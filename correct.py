@@ -69,7 +69,7 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有九百八十个猪'))
+    print(co.correct('这里有一张信'))
 
 
 
