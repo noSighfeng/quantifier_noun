@@ -35,7 +35,7 @@ class correct:
 quantifier_list = []
 num_list = []
 noun_list = []
-quantifier_noun_dict = {} # {'句',('话')}
+quantifier_noun_dict = {} # {'句' : ('话')}
 def init_list():
 
     num_path = os.path.join(os.getcwd(),'data_txt/num.txt')
