@@ -27,7 +27,8 @@ class correct:
             for k,v in self.quantifier_noun_dict.items():
                 if mybe[2] in v:
                     res.append(k)
-        return mybe[0] + '[%s]' % '|'.join(res) + mybe[2]
+            return mybe[0] + '[%s]' % '|'.join(res) + mybe[2]
+        else: return '暂无错误'
 
     
 
@@ -55,11 +56,12 @@ def init_list():
         global noun_list
         noun_list = f.readlines()
 
-    quantifier_noun_dict_path = os.path.join(os.getcwd(),'quan_noun.txt')
+    quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt\\quan_noun.txt')
     with open(quantifier_noun_dict_path,'r',encoding='utf-8') as f:
         for line in f:
-            quan = line.strip()[0]
-            quantifier_noun_dict[quan] = set(line.strip()[2:].split(' '))
+            line_spl = line.split(' ')
+            quan = line_spl[0]
+            quantifier_noun_dict[quan] = set(line_spl[1:])
 
     
     
@@ -69,7 +71,7 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有一张信'))
+    print(co.correct('这里有一棵树'))
 
 
 
