@@ -10,17 +10,20 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([{}]+)' + '({})' + '({})').format(''.join(self.num_list)
+        self.pattern = ('([{}]+)' + '({})' + '(?:{})').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,''.join(self.noun_list))
     
     def find(self,sentence):
         self.init_pattern()
-        print(re.findall(self.pattern,sentence))
+        # print(re.findall(self.pattern,sentence))
         return re.findall(self.pattern,sentence)
 
     def correct(self,sentence): # (['','',''])
-        mybe = self.find(sentence)[0]
+
+        mybe = self.find(sentence)
+        if len(mybe) == 0 : return 
+        mybe = mybe[0]
         res = []
         if mybe[2] not in self.quantifier_noun_dict[mybe[1]]:
             print('存在错误')
@@ -56,7 +59,7 @@ def init_list():
         global noun_list
         noun_list = f.readlines()
 
-    quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt\\quan_noun.txt')
+    quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt/quan_noun.txt')
     with open(quantifier_noun_dict_path,'r',encoding='utf-8') as f:
         for line in f:
             line_spl = line.strip().split(' ')
@@ -72,7 +75,7 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有一棵棵树'))
+    print(co.correct('这里有东西'))
 
 
 
