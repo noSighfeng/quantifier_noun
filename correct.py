@@ -11,7 +11,7 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([\d{}]+)' + '({}|.*)' + '({})').format(''.join(self.num_list)
+        self.pattern = ('([\d{}]+)' + '({})' + '(?:.*?)' + '({})').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,'|'.join(self.noun_list))
         # self.pattern = ('([{}]+)' + '(.*)' + '(年)').format(''.join(self.num_list))
@@ -100,6 +100,8 @@ if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
     co.correct('这篇文章中的这一篇话抒发了表达了作者这三各月以来的颠沛流离')
+    co.correct('这一份情我会记得的')
+    co.correct('表达了作者一种强烈的情感')
 
 
 
