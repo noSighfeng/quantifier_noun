@@ -1,5 +1,6 @@
 import re
 import os
+import jieba
 class correct:
     def __init__(self,noun_list,quantifier_list,num_list,quantifier_noun_dict) -> None:
         self.noun_list = noun_list
@@ -13,7 +14,7 @@ class correct:
         self.pattern = ('([{}]+)' + '({}|.*)' + '({})').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,'|'.join(self.noun_list))
-    
+        # self.pattern = ('([{}]+)' + '(.*)' + '(年)').format(''.join(self.num_list))
     def find(self,sentence):
         res = []
         self.init_pattern()
@@ -23,19 +24,23 @@ class correct:
     def correct(self,sentence): # (['','',''])
         mybe = self.find(sentence)
         if len(mybe) == 0 : return '存在错别字'
-        mybe = mybe[0]
-        res = []
-        try:
-            if mybe[2] not in self.quantifier_noun_dict[mybe[1]]: # 如果名词不在所搭配的量词词典中
-                print('存在错误')
-                for k,v in self.quantifier_noun_dict.items():
-                    if mybe[2] in v:
-                        res.append(k)
-                return mybe[0] + '[%s]' % '|'.join(res) + mybe[2]
-            else: return '暂无错误'
-        except Exception:
+        for i in mybe:
+            res = []
+            try:
+                if i[2] not in self.quantifier_noun_dict[i[1]]: # 如果名词不在所搭配的量词词典中
+                    print('存在错误 {}  '.format(i))
+                    for k,v in self.quantifier_noun_dict.items():
+                        if i[2] in v:
+                            res.append(k)
+                    print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
+                else: print('暂无错误 {}'.format(i))
+            except Exception:
             # 存在非量词
-            return '['+''.join(mybe) + ']句子中的[' + mybe[1] + ']不是量词'
+                print('['+''.join(i) + ']句子中的[' + i[1] + ']不是量词')
+                for k,v in self.quantifier_noun_dict.items():
+                        if i[2] in v:
+                            res.append(k)
+                print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
 
     
 
@@ -50,18 +55,6 @@ def init_list():
     with open(num_path,'r',encoding='utf-8') as f:
         for line in f:
             num_list.append(line.strip())
-
-
-    # quantifier_path = os.path.join(os.getcwd(),'data_txt/quantifier.txt')
-    # with open(quantifier_path,'r',encoding='utf-8') as f:
-    #     for line in f:
-    #         quantifier_list.append(line.strip())
-
-
-    # noun_path = os.path.join(os.getcwd(),'data_txt/noun.txt')
-    # with open(noun_path,'r',encoding='utf-8') as f:
-    #     global noun_list
-    #     noun_list = f.readlines()
 
     # 初始化量词列表，名词列表，量词-名词词典
     quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt/1_quan_noun.txt')
@@ -102,15 +95,11 @@ def init_list():
             error_quan , error_noun = line_spl[0] , line_spl[1]
             quantifier_noun_dict[error_quan].discard(error_noun)
             
-                
-
-
-
-
+            
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    print(co.correct('这里有一平年'))
+    co.correct('这篇文章中的这一篇话抒发了表达了作者这三各月以来的颠沛流离')
 
 
 
