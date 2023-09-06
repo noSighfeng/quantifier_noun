@@ -11,7 +11,7 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([{}]+)' + '({}|.*)' + '({})').format(''.join(self.num_list)
+        self.pattern = ('([\d{}]+)' + '({}|.*)' + '({})').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,'|'.join(self.noun_list))
         # self.pattern = ('([{}]+)' + '(.*)' + '(年)').format(''.join(self.num_list))
@@ -23,7 +23,7 @@ class correct:
 
     def correct(self,sentence): # (['','',''])
         mybe = self.find(sentence)
-        if len(mybe) == 0 : return '存在错别字'
+        if len(mybe) == 0 : print('存在错别字')
         for i in mybe:
             res = []
             try:
