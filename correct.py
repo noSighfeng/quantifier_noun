@@ -42,7 +42,7 @@ class correct:
                             res.append(k)
                 print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
 
-    
+
 
 
 quantifier_list = [] # 量词列表
@@ -57,7 +57,7 @@ def init_list():
             num_list.append(line.strip())
 
     # 初始化量词列表，名词列表，量词-名词词典
-    quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt/1_quan_noun.txt')
+    quantifier_noun_dict_path = os.path.join(os.getcwd(),'data_txt/result.txt')
     with open(quantifier_noun_dict_path,'r',encoding='utf-8') as f:
         for line in f:
             line_spl = line.strip().split(' ')
@@ -70,6 +70,22 @@ def init_list():
             # 量词-名词词典
             quantifier_noun_dict[quan] = set(line_spl[1:])
     
+    # 加载第二份量词-名词词典
+    with open('data_txt/2_quan_noun.txt','r',encoding='utf-8') as f:
+        for line in f:
+            line_spl = line.strip().split(' ')
+            quan = line_spl[0]
+            # 量词列表
+            if quan not in quantifier_list:
+                quantifier_list.append(quan)
+            # 名词列表
+            noun_list.update(line_spl[1:])
+            # 量词-名词词典
+            if quan not in quantifier_noun_dict.keys():
+                quantifier_noun_dict[quan] = set()
+            quantifier_noun_dict[quan].update(line_spl[1:])
+
+
     # 初始化用户词典
     dict_custom_path = os.path.join(os.getcwd(),'data_txt/dict_custom.txt')
     with open(dict_custom_path,'r',encoding='utf-8') as f:
@@ -99,9 +115,11 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    co.correct('这篇文章中的这一篇话抒发了表达了作者这三各月以来的颠沛流离')
-    co.correct('这一份情我会记得的')
-    co.correct('表达了作者一种强烈的情感')
+    # co.correct('这篇文章中的这一篇话抒发了表达了作者这三各月以来的颠沛流离')
+    # co.correct('这一份情我会记得的')
+    # co.correct('表达了作者一种强烈的情感')
+    # co.correct('表达了作者一份情感')
+    co.correct('这里有一支军队')
 
 
 
