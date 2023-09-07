@@ -32,18 +32,19 @@ class correct:
             # 分词判断量词所搭配名词
             pos = [ n for n,flag in posseg.lcut(''.join(i[2])) if flag in ['n']]
             if len(pos) ==0:# 不是名词
-                print('不是名词')
-                break
+                print('[{}]不是名词'.format(i[2]))
+                continue
             i[2] = pos[0]
             res = []
             try:
                 if i[2] not in self.quantifier_noun_dict[i[1]]: # 如果名词不在所搭配的量词词典中
-                    print('存在错误 {}  '.format(i))
+                    print('存在错误 {}  '.format(i),end='\t')
                     for k,v in self.quantifier_noun_dict.items(): # 遍历词典找到名词词可搭配的量词
                         if i[2] in v:
                             res.append(k)
                     print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
-                else: print('暂无错误 {}'.format(i))
+                else: 
+                    print('暂无错误 {}'.format(i))
             except Exception:
             # 存在非量词
                 print('['+''.join(i) + ']句子中的[' + i[1] + ']不是量词')
@@ -129,15 +130,20 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    # co.correct('这篇文章中的这一篇话抒发了表达了作者这三名月以来的颠沛流离')
-    # co.correct('这一份情我会记得的')
-    # co.correct('表达了作者一种强烈的情感')
-    # co.correct('表达了作者一份情感')
-    # co.correct('这里有一匹树')
-    # co.correct('这句话仅仅只是一句话')
-    #co.correct('一枝口红')
-    #co.correct('一棵棵树')
-    co.correct('一支队伍')
+    text = [
+        '这篇文章的每一句话表达了作者这三种月以来的颠沛流离',
+        '这一份情我会记得的',
+        '表达了作者一种强烈的情感',
+        '表达了作者一份情感',
+        '这里有一匹树',
+        '这句话仅仅只是一句话',
+        '一枝口红',
+        '一棵棵树',
+        '一支队伍',
+        '一年有三六五天'
+    ]
+    for i in text:
+        co.correct(i)
 
 
 
