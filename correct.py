@@ -1,6 +1,8 @@
 import re
 import os
 import jieba
+jieba.load_userdict("data_txt/jieba_dict_custom.txt")
+import jieba.posseg as posseg
 class correct:
     def __init__(self,noun_list,quantifier_list,num_list,quantifier_noun_dict) -> None:
         self.noun_list = noun_list
@@ -11,10 +13,11 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([\d{}]+)' + '({})' + '(?:.*?)' + '({})').format(''.join(self.num_list)
+        self.pattern = ('([\d{}]+)' + '({})+' + '(?:.*?)' + '([{}]+)').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,'|'.join(self.noun_list))
         # self.pattern = ('([{}]+)' + '(.*)' + '(年)').format(''.join(self.num_list))
+        # '([]+|[]+)'
     def find(self,sentence):
         res = []
         self.init_pattern()
@@ -23,8 +26,13 @@ class correct:
 
     def correct(self,sentence): # (['','',''])
         mybe = self.find(sentence)
-        if len(mybe) == 0 : print('存在错别字')
+        if len(mybe) == 0 : return
         for i in mybe:
+            i = list(i)
+            pos = [ n for n,flag in posseg.lcut(''.join(i[2])) if flag in ['n']]
+            if len(pos) ==0:
+                break
+            i[2] = pos[0]
             res = []
             try:
                 if i[2] not in self.quantifier_noun_dict[i[1]]: # 如果名词不在所搭配的量词词典中
@@ -85,8 +93,12 @@ def init_list():
                 quantifier_noun_dict[quan] = set()
             quantifier_noun_dict[quan].update(line_spl[1:])
 
+    # 名词列表写入jieba自定义词典
+    with open('data_txt/jieba_dict_custom.txt','w',encoding='utf-8') as f:
+        for i in noun_list:
+            f.write(i + ' 10 ' + 'n' + '\n')
 
-    # 初始化用户词典
+    # 初始化自定义词典
     dict_custom_path = os.path.join(os.getcwd(),'data_txt/dict_custom.txt')
     with open(dict_custom_path,'r',encoding='utf-8') as f:
         for line in f:
@@ -115,11 +127,12 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    # co.correct('这篇文章中的这一篇话抒发了表达了作者这三各月以来的颠沛流离')
-    # co.correct('这一份情我会记得的')
-    # co.correct('表达了作者一种强烈的情感')
-    # co.correct('表达了作者一份情感')
-    co.correct('这里有一支军队')
+    co.correct('这篇文章中的这一篇话抒发了表达了作者这三名月以来的颠沛流离')
+    co.correct('这一份情我会记得的')
+    co.correct('表达了作者一种强烈的情感')
+    co.correct('表达了作者一份情感')
+    co.correct('这里有一棵棵树')
+    co.correct('我相信这个世界会更美好')
 
 
 
