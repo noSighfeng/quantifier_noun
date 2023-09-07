@@ -1,8 +1,8 @@
 import re
 import os
 import jieba
-jieba.load_userdict("data_txt/jieba_dict_custom.txt")
 import jieba.posseg as posseg
+jieba.load_userdict("data_txt/jieba_dict_custom.txt")
 class correct:
     def __init__(self,noun_list,quantifier_list,num_list,quantifier_noun_dict) -> None:
         self.noun_list = noun_list
@@ -13,7 +13,7 @@ class correct:
     
     def init_pattern(self):
         # 数字 量词 名词
-        self.pattern = ('([\d{}]+)' + '({})+' + '(?:.*?)' + '([{}]+)').format(''.join(self.num_list)
+        self.pattern = ('([\d{}]+)' + '({})' + '(?:.*?)' + '([{}]+)').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
                                                        ,'|'.join(self.noun_list))
         # self.pattern = ('([{}]+)' + '(.*)' + '(年)').format(''.join(self.num_list))
@@ -24,20 +24,22 @@ class correct:
         # print(re.findall(self.pattern,sentence))
         return re.findall(self.pattern,sentence)
 
-    def correct(self,sentence): # (['','',''])
+    def correct(self,sentence): # [('一', '篇', '话')]
         mybe = self.find(sentence)
-        if len(mybe) == 0 : return
+        if len(mybe) == 0 : print('没找到数词量词名词搭配') # 没找到数词量词名词搭配
         for i in mybe:
             i = list(i)
+            # 分词判断量词所搭配名词
             pos = [ n for n,flag in posseg.lcut(''.join(i[2])) if flag in ['n']]
-            if len(pos) ==0:
+            if len(pos) ==0:# 不是名词
+                print('不是名词')
                 break
             i[2] = pos[0]
             res = []
             try:
                 if i[2] not in self.quantifier_noun_dict[i[1]]: # 如果名词不在所搭配的量词词典中
                     print('存在错误 {}  '.format(i))
-                    for k,v in self.quantifier_noun_dict.items():
+                    for k,v in self.quantifier_noun_dict.items(): # 遍历词典找到名词词可搭配的量词
                         if i[2] in v:
                             res.append(k)
                     print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
@@ -50,13 +52,12 @@ class correct:
                             res.append(k)
                 print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
 
-
-
-
 quantifier_list = [] # 量词列表
 num_list = [] 
 noun_list = set() # 名词列表
 quantifier_noun_dict = {} # {'句' : ('话')}
+
+# 加载数据
 def init_list():
 
     num_path = os.path.join(os.getcwd(),'data_txt/num.txt')
@@ -97,6 +98,7 @@ def init_list():
     with open('data_txt/jieba_dict_custom.txt','w',encoding='utf-8') as f:
         for i in noun_list:
             f.write(i + ' 10 ' + 'n' + '\n')
+    
 
     # 初始化自定义词典
     dict_custom_path = os.path.join(os.getcwd(),'data_txt/dict_custom.txt')
@@ -127,12 +129,15 @@ def init_list():
 if __name__ == '__main__':
     init_list()
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
-    co.correct('这篇文章中的这一篇话抒发了表达了作者这三名月以来的颠沛流离')
-    co.correct('这一份情我会记得的')
-    co.correct('表达了作者一种强烈的情感')
-    co.correct('表达了作者一份情感')
-    co.correct('这里有一棵棵树')
-    co.correct('我相信这个世界会更美好')
+    # co.correct('这篇文章中的这一篇话抒发了表达了作者这三名月以来的颠沛流离')
+    # co.correct('这一份情我会记得的')
+    # co.correct('表达了作者一种强烈的情感')
+    # co.correct('表达了作者一份情感')
+    # co.correct('这里有一匹树')
+    # co.correct('这句话仅仅只是一句话')
+    #co.correct('一枝口红')
+    #co.correct('一棵棵树')
+    co.correct('一支队伍')
 
 
 
