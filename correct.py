@@ -29,8 +29,9 @@ class correct:
         mybe = self.find(sentence)
         # if len(mybe) == 0 : print('没找到数词量词名词搭配') # 没找到数词量词名词搭配
         errors_span_rights = [] # [(error,index,right)] # 错误列表error[('一', '篇', '话')]  错误范围span  过错后的词right
-        sentence_right = '' # 改错后的句子
+        sentence_right = sentence # 改错后的句子
         for i in mybe:
+            index1,index2,index3 = i.span(1),i.span(2),i.span(3)
             span = i.span()
             i = list(i.groups())
             res = []
@@ -41,7 +42,7 @@ class correct:
                         if i[2] in v:
                             res.append(k)
                     #print(i[0] + '[%s]' % '|'.join(res) + i[2],end='\t') 
-                    errors_span_rights.append((i,span,(i[0] , '[%s]' % '|'.join(res) , i[2])))
+                    errors_span_rights.append((i,span,(i[0] , '[%s]' % '|'.join(res) , i[2]),(index1,index2,index3)))
                     #print(span)
                     #print('正确句子：{}'.format(sentence.replace(''.join(i),i[0] + '[%s]' % '|'.join(res) + i[2])))
                 else: 
@@ -54,7 +55,16 @@ class correct:
                         if i[2] in v:
                             res.append(k)
                 print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
+        if len(errors_span_rights) ==0:
+            return
+        # sentence_right = list(sentence_right)
+        #last_len = len(sentence_right)
+        # for i in errors_span_rights:
+        #     sentence_right[i[3][1][0]+len(sentence_right) -  last_len:i[3][1][1]+len(sentence_right) -  last_len] = i[2][1]
+        #     last_len = len(sentence_right)
+
         print(errors_span_rights)
+        #print(''.join(sentence_right))
 
 quantifier_list = [] # 量词列表
 num_list = [] 
@@ -141,9 +151,10 @@ if __name__ == '__main__':
         '一项情感',
         '一各漂亮的苹果',
         '每到中秋节，家家户户都会吃一轮圆圆的月饼',
-        '我的衣柜里有六件衣服，四件裤子和两件帽子',
+        '我的衣柜里有六件衣服，四件裤子和两件帽子,甚至两件鞋子',
         '墙上挂着一副画',
         '一对眼镜',
+        '一对马',
         '她发现自己头上有一条白头发'
     ]
     for i in text:
