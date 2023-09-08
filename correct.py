@@ -4,7 +4,7 @@ import jieba
 import jieba.posseg as posseg
 jieba.load_userdict("data_txt/jieba_dict_custom.txt")
 class correct:
-    def __init__(self,noun_list,quantifier_list,num_list,quantifier_noun_dict) -> None:
+    def __init__(self,noun_list:set,quantifier_list:list,num_list:list,quantifier_noun_dict:dict) -> None:
         self.noun_list = noun_list
         self.quantifier_list = quantifier_list
         self.num_list = num_list
@@ -15,24 +15,29 @@ class correct:
         # 数字 量词 名词
         self.pattern = ('([\d{}]+)' + '({})' + '(?:.*?)' + '([{}]+)').format(''.join(self.num_list)
                                                        ,'|'.join(self.quantifier_list)
-                                                       ,'|'.join(self.noun_list))
+                                                       ,''.join(self.noun_list))
         # self.pattern = ('([{}]+)' + '(.*)' + '(年)').format(''.join(self.num_list))
         # '([]+|[]+)'
     def find(self,sentence):
         res = []
         self.init_pattern()
         # print(re.findall(self.pattern,sentence))
-        return re.findall(self.pattern,sentence)
+        return re.finditer(self.pattern,sentence)
 
-    def correct(self,sentence): # [('一', '篇', '话')]
+    def correct(self,sentence:str): # [('一', '篇', '话')]
         mybe = self.find(sentence)
-        if len(mybe) == 0 : print('没找到数词量词名词搭配') # 没找到数词量词名词搭配
+        # if len(mybe) == 0 : print('没找到数词量词名词搭配') # 没找到数词量词名词搭配
         for i in mybe:
-            i = list(i)
+            # print(i.group(2))
+            # print(i.span(2))
+            span = i.span()
+            # print(span)
+            i = list(i.groups())
             # 分词判断量词所搭配名词
             pos = [ n for n,flag in posseg.lcut(''.join(i[2])) if flag in ['n']]
             if len(pos) ==0:# 不是名词
                 print('[{}]不是名词'.format(i[2]))
+                self.correct(sentence.replace(i[2],''))
                 continue
             i[2] = pos[0]
             res = []
@@ -42,7 +47,8 @@ class correct:
                     for k,v in self.quantifier_noun_dict.items(): # 遍历词典找到名词词可搭配的量词
                         if i[2] in v:
                             res.append(k)
-                    print(i[0] + '[%s]' % '|'.join(res) + i[2]) 
+                    print(i[0] + '[%s]' % '|'.join(res) + i[2],end='\t') 
+                    print(span )
                 else: 
                     print('暂无错误 {}'.format(i))
             except Exception:
@@ -132,15 +138,11 @@ if __name__ == '__main__':
     co = correct(noun_list,quantifier_list,num_list,quantifier_noun_dict)
     text = [
         '这篇文章的每一句话表达了作者这三种月以来的颠沛流离',
-        '这一份情我会记得的',
-        '表达了作者一种强烈的情感',
-        '表达了作者一份情感',
-        '这里有一匹树',
-        '这句话仅仅只是一句话',
-        '一枝口红',
-        '一棵棵树',
-        '一支队伍',
-        '一年有三六五天'
+        '表达了作者一个强烈的情感',
+        '这里有好多个苹果',
+        '这将是一个重要的时刻',
+        '一份情感',
+        '一个无与伦比'
     ]
     for i in text:
         co.correct(i)
