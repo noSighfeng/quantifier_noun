@@ -30,6 +30,7 @@ class correct:
         mybe = self.find(sentence)
         # if len(mybe) == 0 : print('没找到数词量词名词搭配') # 没找到数词量词名词搭配
         errors_span_rights = [] # [(error,index,right)] # 错误列表error[('一', '篇', '话')]  错误范围span  过错后的词right
+        
         sentence_right = sentence # 改错后的句子
         for i in mybe:
             try:
@@ -135,7 +136,7 @@ def init_list():
     # 名词列表写入jieba自定义词典
     with open('data_txt/jieba_dict_custom.txt', 'w', encoding='utf-8') as f:
         for i in noun_list:
-            f.write(i + ' 10 ' + 'n' + '\n')
+            f.write(i + ' 100 ' + 'n' + '\n')
 
     # 纠正错误词典 错误类型：量词错误搭配
     dict_error_path = os.path.join(os.getcwd(), 'data_txt/dict_error.txt')
